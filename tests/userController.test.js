@@ -31,6 +31,10 @@ describe('UserController Tests', () => {
     test('0% discount should return original price', () => {
       expect(UserController.calculateDiscount(100, 0)).toBe(100);
     });
+    
+    test('100% discount should return 0', () => {
+      expect(UserController.calculateDiscount(100, 100)).toBe(0);
+    });
   });
   
   describe('validateEmail()', () => {
@@ -44,6 +48,10 @@ describe('UserController Tests', () => {
     
     test('email without dot should return false', () => {
       expect(UserController.validateEmail('user@example')).toBe(false);
+    });
+    
+    test('empty email should return false', () => {
+      expect(UserController.validateEmail('')).toBe(false);
     });
   });
 });
