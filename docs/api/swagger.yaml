@@ -1,0 +1,106 @@
+'EOF'
+openapi: 3.0.0
+info:
+  title: User Management API
+  description: Демонстраційне API для практичного завдання
+  version: 1.0.0
+  contact:
+    name: Команда розробників
+    email: team@example.com
+
+servers:
+  - url: http://localhost:3000
+    description: Локальний сервер розробки
+
+paths:
+  /api/users:
+    get:
+      tags:
+        - Users
+      summary: Отримати всіх користувачів
+      description: Повертає список всіх зареєстрованих користувачів
+      responses:
+        '200':
+          description: Успішний запит
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    email:
+                      type: string
+    
+    post:
+      tags:
+        - Users
+      summary: Створити нового користувача
+      description: Додає нового користувача в систему
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+      responses:
+        '201':
+          description: Користувача успішно створено
+  
+  /api/users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Отримати користувача за ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Користувача знайдено
+        '404':
+          description: Користувача не знайдено
+  
+  /api/discount:
+    get:
+      tags:
+        - Utils
+      summary: Розрахувати знижку
+      parameters:
+        - name: price
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: discount
+          in: query
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Розрахунок виконано
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  originalPrice:
+                    type: number
+                  discount:
+                    type: number
+                  finalPrice:
+                    type: number
+EOF
