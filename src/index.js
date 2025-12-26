@@ -1,30 +1,48 @@
+'EOF'
 const express = require('express');
-const swaggerUi = require('swagger-ui-express');
-const YAML = require('yamljs');
-const userRoutes = require('./routes/userRoutes');
+const userController = require('./controllers/userController');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(express.json());
 
-// Swagger документація
-const swaggerDocument = YAML.load('./docs/api/swagger.yaml');
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-// Маршрути
-app.use('/api/users', userRoutes);
-
-// Обробка помилок
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Щось пішло не так!' });
+// Прості маршрути API
+app.get('/api/users', (req, res) => {
+  res.json(userController.getUsers());
 });
 
-app.listen(PORT, () => {
-  console.log(`Сервер запущено на порті ${PORT}`);
-  console.log(`Swagger документація: http://localhost:${PORT}/api-docs`);
+app.get('/api/users/:id', (req, res) => {
+  const user = userController.getUserById(parseInt(req.params.id));
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404).json({ error: 'Користувача не знайдено' });
+  }
 });
+
+app.post('/api/users', (req, res) => {
+  const newUser = userController.createUser(req.body);
+  res.status(201).json(newUser);
+});
+
+// Маршрут для розрахунку знижки
+app.get('/api/discount', (req, res) => {
+  const { price, discount } = req.query;
+  const result = userController.calculateDiscount(
+    parseFloat(price), 
+    parseFloat(discount)
+  );
+  res.json({ originalPrice: price, discount, finalPrice: result });
+});
+
+// Запуск сервера
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Сервер запущено на порті ${PORT}`);
+    console.log(`📚 API доступне за адресою http://localhost:${PORT}/api`);
+  });
+}
 
 module.exports = app;
+EOF
